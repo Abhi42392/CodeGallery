@@ -1,0 +1,97 @@
+"use client";
+
+import React, { useState } from "react";
+import Image from "next/image";
+import Link from "next/link";
+import { signOut } from "next-auth/react";
+
+const RightNav = ({ session }) => {
+  const [openMenu, setOpenMenu] = useState(false);
+
+  return (
+    <div className="flex items-center mr-4 gap-4  my-6 relative">
+      {/* Share Work Button */}
+      <Link href="/create-project">
+        <button
+          className="border-2 border-black text-black px-6 py-1 rounded-full cursor-pointer 
+                     hover:bg-black hover:text-white  transition-colors duration-300"
+        >
+          Share work
+        </button>
+      </Link>
+
+      {/* User Profile Menu */}
+      <div
+        className={`px-6 py-2 shadow-md flex items-center gap-2 transition-all duration-300 cursor-pointer ${
+          openMenu ? "rounded-t-lg" : "rounded-full"
+        } bg-white relative`}
+      >
+        <Image
+          src={session.user.image}
+          width={20}
+          height={20}
+          alt="User Avatar"
+          className="rounded-full hover:scale-105 transition-transform duration-300"
+          onClick={() => setOpenMenu((prev) => !prev)}
+        />
+
+        <div className="flex items-center gap-1" onClick={() => setOpenMenu((prev) => !prev)}>
+          <p className="text-sm text-gray-800">{session.user.name}</p>
+          {openMenu ? (
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              strokeWidth={1.5}
+              stroke="currentColor"
+              className="h-4 w-4 transition-transform duration-300 rotate-180"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M4.5 15.75L12 8.25l7.5 7.5"
+              />
+            </svg>
+          ) : (
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              strokeWidth={1.5}
+              stroke="currentColor"
+              className="h-4 w-4 transition-transform duration-300"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M19.5 8.25L12 15.75 4.5 8.25"
+              />
+            </svg>
+          )}
+        </div>
+
+        {/* Dropdown Menu */}
+        <div
+          className={`absolute top-full left-0 w-full bg-white z-10 shadow-md rounded-b-md px-6 py-2 transition-all duration-300 origin-top transform ${
+            openMenu ? "scale-y-100 opacity-100" : "scale-y-0 opacity-0 pointer-events-none"
+          }`}
+          style={{ transformOrigin: "top" }}
+        >
+          <Link href="/my-profile" onClick={()=>{setOpenMenu(false)}}>
+            <p className="text-gray-700 py-2 hover:text-black cursor-pointer transition-colors">
+              My Profile
+            </p>
+          </Link>
+          <p
+            className="text-gray-700 pb-2 hover:text-black cursor-pointer transition-colors"
+            onClick={() => signOut()}
+          >
+            Logout
+          </p>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default RightNav;

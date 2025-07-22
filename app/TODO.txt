@@ -1,0 +1,5 @@
+dont include deleting images from cloudinary
+protected routes
+loading pages
+form validation
+single connect to MongoDB

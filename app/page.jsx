@@ -1,0 +1,18 @@
+
+import PostsFilter from './components/PostsFilter';
+
+async function getProjects() {
+  const res = await fetch('http://localhost:3000/api/get-all-posts');
+  const data = await res.json();
+  return data.data;
+}
+
+export default async function Home() {
+  const projects = await getProjects();
+
+  return (
+    <div className='my-8'>
+      <PostsFilter posts={projects}/>
+    </div>
+  );
+}
