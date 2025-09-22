@@ -87,7 +87,7 @@ const Project = async ({ params }) => {
 
         {/* Description & Links */}
         <section className="mt-16 text-center px-4 flex flex-col items-center">
-          <p className="max-w-5xl text-lg text-gray-300">{description}</p>
+          <p className="max-w-5xl text-lg ">{description}</p>
 
           <div className="flex flex-wrap items-center justify-center gap-4 mt-6 text-sm font-medium">
             <Link

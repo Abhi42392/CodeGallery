@@ -17,12 +17,7 @@ const NavBar = () => {
     <nav className='flex'>
       <div className='flex flex-1 gap-10 mx-4 my-6 '>
         <Link href="/">
-          <Image 
-            src="/logo.svg"
-            width={115}
-            height={43}
-            alt="nfkjds"
-          />
+          <h1 className='text-2xl font-bold'>Code Gallery</h1>
         </Link>
         <ul className='lg:flex hidden items-center text-sm gap-4'>
           {NavLinks.map((data,i)=>(createNavLink(data,i)))}

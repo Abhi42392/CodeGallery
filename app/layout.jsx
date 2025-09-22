@@ -15,9 +15,9 @@ export default async function RootLayout({ children }) {
     <html lang="en">
       <body>
         {session?
-          <div>
+          <div className="min-h-screen flex flex-col">
             <NavBar />
-            <main>
+            <main className="flex-1">
               {children}
             </main>
             <Footer />

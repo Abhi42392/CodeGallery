@@ -34,7 +34,7 @@ const PostsFilter = ({posts}) => {
   
   const search=(()=>{
     const filteredBySearch=posts.filter((post)=>
-    post.title.toLowerCase().includes(searchTitle)
+    (post.title.toLowerCase().includes(searchTitle.toLowerCase())||post.description.toLowerCase().includes(searchTitle.toLowerCase()))
   )
    setFilteredPosts(filteredBySearch)
   })
@@ -57,11 +57,23 @@ const PostsFilter = ({posts}) => {
                     value={searchTitle}
                     onChange={(e) => setSearchTitle(e.target.value)}
                     placeholder="Search posts by title"
-                    className="w-full px-4 py-2 rounded-full text-gray-800 placeholder:text-gray-500 
-                              bg-white border-2 border-purple-600 
-                              focus:outline-none focus:ring-1 focus:ring-purple-300 focus:border-purple-600 
+                    className="w-full pl-4 pr-32 py-2 rounded-full text-gray-800 placeholder:text-gray-500
+                              bg-white border-2 border-purple-600
+                              focus:outline-none focus:ring-1 focus:ring-purple-300 focus:border-purple-600
                               shadow-lg transition duration-300"
                   />
+                  {/* cross icon  visible only when searchTitle is not empyty */}
+                  {searchTitle && (
+                    <button 
+                      onClick={() =>{ setSearchTitle(""),
+                        setFilteredPosts(posts)
+                      }
+                      } 
+                      className="absolute top-1/2 -translate-y-1/2 right-26 text-gray-500 hover:text-gray-700 cursor-pointer"
+                    >
+                      ✕
+                    </button>
+                  )}
                   <button onClick={search} className="absolute top-0 right-0 px-6 text-white cursor-pointer bg-purple-400 h-full rounded-r-full">Search</button>
                 </div>
 
@@ -122,7 +134,7 @@ const PostsFilter = ({posts}) => {
                 </div>
             </div>
         </div>
-        <div className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 mx-4 mb-4 mt-20 gap-8'>
+        <div className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 mx-4 mb-4 mt-20 gap-8'>
         {sortedPosts.map((p) => (
           <ProjectCard
             id={p._id}

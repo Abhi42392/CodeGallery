@@ -16,8 +16,8 @@ const getData = async () => {
     const response = await fetch(`/api/post/get-all-data/${id}`);
     const data = await response.json();
 
-    setLikes(likesCount+data.likes);          // ✅ use server value directly
-    setIsLiked(data.isLiked);      // ✅ properly set isLiked from server
+    setLikes(likesCount+data.likes);         
+    setIsLiked(data.isLiked);      
     setViews(data.views)
   } catch (err) {
     console.log(err);
@@ -59,7 +59,7 @@ if (loading) return <LoadingDots />;
           src={image}
           width={414}
           height={314}
-          className="w-full h-64 object-cover object-center transition-transform duration-300 group-hover:scale-105"
+          className="w-full h-64 object-contain object-center transition-transform duration-300 group-hover:scale-105"
           alt="project image"
         />
         <div className="absolute bottom-0 left-0 right-0 bg-black bg-opacity-50 px-4 py-2 text-white text-lg font-semibold hidden group-hover:block">

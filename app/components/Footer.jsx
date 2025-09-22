@@ -18,22 +18,8 @@ const Footer = () => {
   }
 
   return (
-    <footer className='px-6 py-2 '>
-      <div className='my-2'>
-        <Image src={"/logo-purple.svg"} width={114} height={43} alt="this "/>
-        <p className='mt-5'>Flexibble is the worlds leading community for<br/>creators to show, grow, and get hired</p>
-      </div>
-      <div className='flex flex-wrap md:justify-between gap-12 mt-5 '>
-        {createFooterLink(footerLinks[0])}
-        <div>
-          {createFooterLink(footerLinks[1])}
-          {createFooterLink(footerLinks[2])}
-        </div>
-        {createFooterLink(footerLinks[3])}
-        {createFooterLink(footerLinks[4])}
-        {createFooterLink(footerLinks[5])}
-        {createFooterLink(footerLinks[6])}
-      </div>
+    <footer className='px-6 pb-2'>
+      <h1 className='text-2xl font-bold'>Code Gallery</h1>
       <div className='flex justify-between'>
         <p>@ 2025, Flexibble all copy rights reserved.</p>
         <p className='flex gap-2 text-gray-600'>
