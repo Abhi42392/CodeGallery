@@ -3,9 +3,9 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import LoadingDots from "./LoadingDots";
+import LoadingData from "./LoadingData";
 
-const ProjectCard = ({ id, image, title,user,likesCount,viewsCount}) => {
+const ProjectCard = ({ id, image, title, description,user,likesCount,viewsCount}) => {
   const [likes, setLikes] = useState(likesCount);
   const [views, setViews] = useState(viewsCount);
   const[isLiked,setIsLiked]=useState(false)
@@ -23,8 +23,6 @@ const getData = async () => {
     console.log(err);
   }
 };
-
-
 
   const handleLike=async()=>{
     try{
@@ -51,23 +49,28 @@ useEffect(() => {
   getData().finally(() => setLoading(false));
 }, []);
 
-if (loading) return <LoadingDots />; 
+if (loading) return <LoadingData />; 
   return (
-    <div className="flex flex-col bg-white dark:bg-gray-900 shadow-md hover:shadow-lg transition-shadow duration-300 rounded-2xl overflow-hidden">
+    <div className="flex flex-col bg-white shadow-md hover:shadow-lg transition-shadow duration-300 rounded-2xl overflow-hidden">
       <Link href={`/project/${id}`} className="relative group">
         <Image
           src={image}
           width={414}
           height={314}
-          className="w-full h-64 object-contain object-center transition-transform duration-300 group-hover:scale-105"
+          className="w-full h-64 object-contain object-center transition-transform duration-300"
           alt="project image"
         />
-        <div className="absolute bottom-0 left-0 right-0 bg-black bg-opacity-50 px-4 py-2 text-white text-lg font-semibold hidden group-hover:block">
-          {title}
-        </div>
       </Link>
+      <div className="flex flex-col px-2 cursor-pointer">
+        <p className="text font-semibold ">
+          {title}
+        </p>
+        <p className="text-sm whitespace-nowrap overflow-hidden text-ellipsis">
+          {description}
+        </p>
 
-      <div className="flex items-center justify-between px-4 py-3">
+      </div>
+      <div className="flex items-center justify-between px-2 py-3">
         <Link href={`/profile/${user._id}`}>
           <div className="flex items-center gap-2 hover:underline">
             <Image
@@ -83,7 +86,7 @@ if (loading) return <LoadingDots />;
           </div>
         </Link>
 
-        <div className="flex items-center gap-4 text-gray-600 dark:text-gray-300">
+        <div className="flex items-center space-x-2 text-gray-600 dark:text-gray-300">
           <div className="flex items-center gap-1">
             {isLiked?(<Image src="/hearth-purple.svg" width={16} height={16} alt="heart" onClick={handleLike} />):
             (<Image src="/hearth.svg" width={16} height={16} alt="heart" onClick={handleLike} />)}

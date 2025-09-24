@@ -135,7 +135,8 @@ const PostsFilter = ({posts}) => {
             </div>
         </div>
         <div className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 mx-4 mb-4 mt-20 gap-8'>
-        {sortedPosts.map((p) => (
+        {sortedPosts.map((p) =>(
+          
           <ProjectCard
             id={p._id}
             key={p._id}
@@ -144,8 +145,9 @@ const PostsFilter = ({posts}) => {
             image={p.poster}
             likesCount={p.likes}
             viewsCount={p.views}
+            description={p.description}
           />
-        ))   }
+          ))}
       </div>
     </div>
   );

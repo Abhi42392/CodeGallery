@@ -31,7 +31,38 @@ const userSchema = new mongoose.Schema({
     type: [String],
     default: [] 
   },
-  phone:{type:String,default:""}
+  phone:{type:String,default:""},
+  organizations: {
+    type: [
+      {
+        name: {
+          type: String,
+          required: true,
+          trim: true,
+          maxLength: 100
+        },
+        jobTitle: {
+          type: String,
+          required: true,
+          trim: true,
+          maxLength: 100
+        },
+        startDate: {
+          type: Date,
+          required: false
+        },
+        endDate: {
+          type: Date,
+          required: false
+        },
+        isCurrent:{
+          type:Boolean,
+          default:false
+        }
+      }
+    ],
+    default: []
+  }
 });
 
 
