@@ -1,4 +1,4 @@
-import redisClient from "@/app/config/redis";
+import connectRedis from "@/app/config/redis";
 import { auth } from "../../auth";
 
 export const handleLike = async (postId) => {
@@ -7,7 +7,7 @@ export const handleLike = async (postId) => {
     if (!session || !session.user) {
       throw new Error("Unauthorized action");
     }
-
+    const redisClient=await connectRedis();
     const key = `post:${postId}`;
     const likesField = "likes";
     const userLikeKey = `liked:${postId}:${session.user.id}`;
@@ -37,6 +37,7 @@ export const handleLike = async (postId) => {
 
 export const getLikes = async (postId) => {
   try {
+    const redisClient=await connectRedis();
     const likes = await redisClient.hGet(`post:${postId}`, "likes");
     return likes ? parseInt(likes) : 0;
   } catch (err) {
@@ -47,6 +48,7 @@ export const getLikes = async (postId) => {
 
 export const isUserLiked = async (postId) => {
   try {
+    const redisClient=await connectRedis();
     const session = await auth();
     if (!session || !session.user?.id) {
       return false;
@@ -66,6 +68,7 @@ export const isUserLiked = async (postId) => {
 
 export const addView=async(postId)=>{
   try{
+    const redisClient=await connectRedis();
     const key=`view:${postId}`
     const session = await auth();
     if (!session || !session.user?.id) {
@@ -83,6 +86,7 @@ export const addView=async(postId)=>{
 
 export const getViewCount=async(postId)=>{
   try{
+    const redisClient=await connectRedis();
     const key=`view:${postId}`
     const views=await redisClient.sCard(key)
     console.log()

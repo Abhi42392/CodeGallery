@@ -5,7 +5,7 @@ import SignInOptions from "./components/SignInOptions";
 import { auth } from "./auth";
 
 export const metadata = {
-  title: "Flexibble",
+  title: "Code Gallery",
   description: "know what others are creating",
 };
 

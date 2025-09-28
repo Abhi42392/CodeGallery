@@ -1,14 +1,28 @@
-import { createClient } from "redis";
+// lib/redis.js
+import { createClient } from 'redis';
 
-let redisClient;
+let client;
 
-if(!global.redisClient){
-    redisClient=createClient()
-    redisClient.on('error',(err)=>{console.log("Redis connection failed",err)})
-    await redisClient.connect().then(()=>{console.log("Redis connected successfully")})
-    global.redisClient=redisClient;
-}else{
-    redisClient=global.redisClient
+export async function connectRedis() {
+    if(client&&client.isOpen){
+        return client;
+    }
+    client = createClient({
+        password: process.env.REDIS_PASSWORD,
+        socket: {
+            host: 'redis-10589.c62.us-east-1-4.ec2.redns.redis-cloud.com',
+            port: 10589
+        }
+    });
+
+    client.on('error', (err) => console.error('Redis Client Error', err));
+    try{
+        await client.connect();
+        console.log('✅ Redis Connected Successfully');
+    }catch(err){
+        console.log('Redis Connection Failed',err);
+    }
+    return client;
 }
 
-export default redisClient
+export default connectRedis;
