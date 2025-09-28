@@ -3,3 +3,5 @@ protected routes
 loading pages
 form validation
 single connect to MongoDB
+remove keys from redis
+periodically syncing data to db

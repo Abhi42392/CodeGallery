@@ -6,7 +6,6 @@ import { NextResponse } from "next/server";
 export async function GET() {
   try {
     await connectDB();
-    
     const posts = await ProjectModel.find({}).populate('user');
     return NextResponse.json({ success: true, data: posts });
   } catch (err) {

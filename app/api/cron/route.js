@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import redisClient from "@/app/config/redis";
+import connectRedis from "@/app/config/redis";
 import ProjectModel from "@/app/models/ProjectModel";
 import connectDB from "@/app/config/mongodb";
 
@@ -19,6 +19,7 @@ export async function GET() {
 const updateLikes=async()=>{
   try {
     await connectDB();
+    const redisClient=await connectRedis();
     const keys = await redisClient.keys("post:*");
 
     for (const key of keys) {
@@ -49,6 +50,7 @@ const updateLikes=async()=>{
 const updateViews=async()=>{
   try{
     await connectDB()
+    const redisClient=await connectRedis();
     const posts=await redisClient.sMembers("view-keys")
     for(let post of posts){
       const views=await redisClient.sCard(post);
