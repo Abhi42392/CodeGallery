@@ -238,7 +238,7 @@ const MyProfileForm = ({ user = {} }) => {
       fd.append("portfolio", JSON.stringify(userData.portfolio));
       fd.append("organizations", JSON.stringify(userData.organizations));
 
-      const response = await fetch("/api/user/update-profile", {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_SITE_URL}/api/user/update-profile`, {
         method: "POST",
         body: fd,
       });

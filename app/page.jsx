@@ -2,7 +2,7 @@
 import PostsFilter from './components/PostsFilter';
 
 async function getProjects() {
-  const res = await fetch('/api/get-all-posts');
+  const res = await fetch(`${process.env.NEXT_PUBLIC_SITE_URL}/api/get-all-posts`);
   const data = await res.json();
   return data.data;
 }

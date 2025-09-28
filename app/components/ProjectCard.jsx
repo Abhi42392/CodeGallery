@@ -13,7 +13,7 @@ const ProjectCard = ({ id, image, title, description,user,likesCount,viewsCount}
 
 const getData = async () => {
   try {
-    const response = await fetch(`/api/post/get-all-data/${id}`);
+    const response = await fetch(`${process.env.NEXT_PUBLIC_SITE_URL}/api/post/get-all-data/${id}`);
     const data = await response.json();
 
     setLikes(likesCount+data.likes);         
@@ -33,7 +33,7 @@ const getData = async () => {
         setIsLiked(true)
         setLikes(prev=>prev+1)
       }
-       const response=await fetch(`/api/post/likes/${id}`,{
+       const response=await fetch(`${process.env.NEXT_PUBLIC_SITE_URL}/api/post/likes/${id}`,{
         method:"POST"
        })
        if(response.status!=200){
