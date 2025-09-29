@@ -13,7 +13,7 @@ const RightNav = ({ session }) => {
       {/* Share Work Button */}
       <Link href="/create-project">
         <button
-          className="border-2 border-black text-black px-6 py-1 rounded-full cursor-pointer 
+          className="hidden sm:block border-2 border-black text-black px-3 sm:px-6 py-1 rounded-full cursor-pointer 
                      hover:bg-black hover:text-white  transition-colors duration-300"
         >
           Share work
@@ -22,7 +22,7 @@ const RightNav = ({ session }) => {
 
       {/* User Profile Menu */}
       <div
-        className={`px-6 py-2 shadow-md flex items-center gap-2 transition-all duration-300 cursor-pointer ${
+        className={`px-3 sm:px-6 py-2 shadow-md flex items-center gap-2 transition-all duration-300 cursor-pointer ${
           openMenu ? "rounded-t-lg" : "rounded-full"
         } bg-white relative`}
       >
@@ -36,7 +36,7 @@ const RightNav = ({ session }) => {
         />
 
         <div className="flex items-center gap-1" onClick={() => setOpenMenu((prev) => !prev)}>
-          <p className="text-sm text-gray-800">{session.user.name}</p>
+          <p className="text-sm text-gray-800 hidden sm:block">{session.user.name}</p>
           {openMenu ? (
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -72,13 +72,13 @@ const RightNav = ({ session }) => {
 
         {/* Dropdown Menu */}
         <div
-          className={`absolute top-full left-0 w-full bg-white z-10 shadow-md rounded-b-md px-6 py-2 transition-all duration-300 origin-top transform ${
+          className={`absolute top-full right-0 sm:left-0 w-fit sm:w-full  bg-white z-10 shadow-md rounded-b-md px-6 py-2 transition-all duration-300 origin-top transform ${
             openMenu ? "scale-y-100 opacity-100" : "scale-y-0 opacity-0 pointer-events-none"
           }`}
           style={{ transformOrigin: "top" }}
         >
           <Link href="/my-profile" onClick={()=>{setOpenMenu(false)}}>
-            <p className="text-gray-700 py-2 hover:text-black cursor-pointer transition-colors">
+            <p className="text-gray-700 py-2 whitespace-nowrap hover:text-black cursor-pointer transition-colors">
               My Profile
             </p>
           </Link>
@@ -88,6 +88,13 @@ const RightNav = ({ session }) => {
           >
             Logout
           </p>
+          <Link href="/create-project">
+            <p
+            className="text-gray-700 pb-2 hover:text-black cursor-pointer transition-colors whitespace-nowrap"
+          >
+            Share Work
+          </p>
+          </Link>
         </div>
       </div>
     </div>
