@@ -12,7 +12,6 @@ const PostsFilter = ({posts}) => {
   const [showCategoryDropdown, setShowCategoryDropdown] = useState(false);
   const [filter, setFilter] = useState("");
   const [filteredPosts, setFilteredPosts] = useState(posts)
-
   const handleFilterClick = (value) => {
     setFilter(prev=>(prev===value?"":value));
     setShowFilterDropdown(false);
