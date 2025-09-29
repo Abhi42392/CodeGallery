@@ -9,7 +9,7 @@ const RightNav = ({ session }) => {
   const [openMenu, setOpenMenu] = useState(false);
 
   return (
-    <div className="flex items-center mr-4 gap-4  my-6 relative">
+    <div className="flex items-center gap-4  sm:mx-4 sm:my-6 relative">
       {/* Share Work Button */}
       <Link href="/create-project">
         <button
@@ -21,9 +21,9 @@ const RightNav = ({ session }) => {
       </Link>
 
       {/* User Profile Menu */}
-      <div
-        className={`px-3 sm:px-6 py-2 shadow-md flex items-center gap-2 transition-all duration-300 cursor-pointer ${
-          openMenu ? "rounded-t-lg" : "rounded-full"
+      <div 
+        className={`px-3 sm:px-6 py-2 sm:shadow-md sm:flex sm:items-center sm:gap-2 transition-all duration-300 cursor-pointer ${
+          openMenu ? "sm:rounded-t-lg" : "sm:rounded-full"
         } bg-white relative`}
       >
         <Image
@@ -31,11 +31,11 @@ const RightNav = ({ session }) => {
           width={20}
           height={20}
           alt="User Avatar"
-          className="rounded-full hover:scale-105 transition-transform duration-300"
+          className="rounded-full hover:scale-105 transition-transform duration-300 max-sm:h-8  max-sm:w-8"
           onClick={() => setOpenMenu((prev) => !prev)}
         />
 
-        <div className="flex items-center gap-1" onClick={() => setOpenMenu((prev) => !prev)}>
+        <div className="hidden sm:flex items-center gap-1" >
           <p className="text-sm text-gray-800 hidden sm:block">{session.user.name}</p>
           {openMenu ? (
             <svg

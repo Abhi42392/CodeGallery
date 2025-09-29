@@ -14,8 +14,8 @@ const NavBar = () => {
     )
   }
   return (
-    <nav className='flex'>
-      <div className='flex flex-1 gap-10 mx-4 my-6 '>
+    <nav className='flex items-center'>
+      <div className='flex flex-1 gap-10 m-2 sm:mx-4 sm:my-6 '>
         <Link href="/">
           <h1 className='text-2xl font-bold'>Code Gallery</h1>
         </Link>

@@ -73,17 +73,17 @@ const PostsFilter = ({posts}) => {
   
   return (
     <div>
-        <div className="w-full px-5">
+        <div className="w-full px-3 sm:px-5">
             <div className="flex flex-wrap md:flex-nowrap justify-between items-center gap-3">
                 {/* Search Input */}
-                <div className="w-full md:w-[40%] relative">
+                <div className="w-full md:w-[40%] relative max-sm:mb-2">
                   <input
                     type="text"
                     value={searchTitle}
                     onChange={(e) => setSearchTitle(e.target.value)}
                     placeholder="Search posts by title"
                     onKeyDown={handleKeyDown} //to trigger search function on clicking enter key
-                    className="w-full pl-4 pr-32 py-2 rounded-full text-gray-800 placeholder:text-gray-500
+                    className="max-sm:text-sm w-full pl-4 pr-32 py-2 rounded-full text-gray-800 placeholder:text-gray-500
                               bg-white border-2 border-purple-600
                               focus:outline-none focus:ring-1 focus:ring-purple-300 focus:border-purple-600
                               shadow-lg transition duration-300"
@@ -108,19 +108,19 @@ const PostsFilter = ({posts}) => {
                   </button>
                 </div>
 
-                <div className="flex gap-3 flex-wrap items-center">
+                <div className="flex gap-3 max-sm:text-xs flex-wrap items-center">
                   {/* Filter Dropdown (styled like category) */}
                   <div className="relative cursor-pointer">
                     <button
                       onClick={() => setShowFilterDropdown(!showFilterDropdown)}
-                      className="flex items-center cursor-pointer justify-between min-w-[11rem] px-6 py-2 text-sm border border-gray-200 rounded-md hover:border-gray-300 transition-all duration-200"
+                      className="flex items-center cursor-pointer justify-between w-30 sm:min-w-[11rem] px-6 py-2 text-sm border border-gray-200 rounded-md hover:border-gray-300 transition-all duration-200"
                     >
                       <span>{filter || "Sort by"}</span>
                       <ArrowIcon isOpen={showFilterDropdown} />
                     </button>
                     {/*apply styling to this drop down menu to smoothly slide down when selected*/}
                     {showFilterDropdown && (
-                      <div className="absolute right-0 mt-2 w-44 bg-white border border-gray-200 rounded-md shadow-md z-10 animate-fadeIn">
+                      <div className="absolute right-0 mt-2 w-30 sm:w-44 bg-white border border-gray-200 rounded-md shadow-md z-10 animate-fadeIn">
                         {["Popularity", "Most Viewed", "Most Recent", "Older"].map((option) => (
                           <button
                             key={option}
@@ -166,7 +166,7 @@ const PostsFilter = ({posts}) => {
                 </div>
             </div>
         </div>
-        <div className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 mx-4 mb-4 mt-20 gap-8'>
+        <div className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 mx-4 mb-4 mt-10 sm:mt-20 gap-8'>
           {sortedPosts.map((p) => (
             <ProjectCard
               id={p._id}

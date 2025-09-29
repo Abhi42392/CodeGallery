@@ -11,7 +11,7 @@ export default async function Home() {
   const projects = await getProjects();
 
   return (
-    <div className='my-8'>
+    <div className='my-4 sm:my-8'>
       <PostsFilter posts={projects}/>
     </div>
   );
