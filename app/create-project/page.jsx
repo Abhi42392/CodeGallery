@@ -13,9 +13,9 @@ const CreateProject = () => {
     
   return (
     <Modal>
-        <div className='relative m-4  '>
-            <h3 className='font-bold font-primary mt-8 ml-4 text-5xl'>Create your project</h3>
-            <p className='absolute top-0 right-2 cursor-pointer' onClick={onDismiss}>X</p>
+        <div className='relative sm:m-4 '>
+            <h3 className='font-bold font-primary mt-4 sm:mt-8 mx-3 text-3xl sm:text-5xl'>Create your project</h3>
+            <p className='absolute -top-2 right-3 cursor-pointer' onClick={onDismiss}>X</p>
             <ProjectForm type="create" />
         </div>
     </Modal>

@@ -11,7 +11,7 @@ const Button = ({
 }) => (
   <button
     disabled={submitting}
-    className={`flex items-center justify-center gap-3 px-4 py-1 mx-4 my-2
+    className={`flex items-center justify-center gap-3 px-4 py-1 sm:mx-4 sm:my-2
       ${textColor || 'text-white'} 
       ${submitting ? 'bg-black/50' : bgColor || 'bg-purple-600'} 
       rounded-md cursor-pointer text-sm font-medium max-md:w-full`}

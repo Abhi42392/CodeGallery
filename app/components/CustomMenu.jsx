@@ -24,7 +24,7 @@ const CustomMenu = ({ title, state, filters, setState }) => {
     };
 
     return (
-        <div className="flex flex-col w-full  relative  mx-4 " ref={dropdownRef}>
+        <div className="flex flex-col w-full  relative  sm:mx-4 " ref={dropdownRef}>
             <label htmlFor={title} className="w-full my-2">{title}</label>
             <div className="relative w-full max-w-[200px]">
                 <button

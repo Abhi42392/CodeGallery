@@ -89,7 +89,7 @@ const ProjectForm = ({ type, project }) => {
   return (
     <form
       
-      className="flex flex-col overflow-y-scroll max-h-[75vh] gap-6 p-6 w-full"
+      className="flex flex-col overflow-y-scroll max-h-[75vh] gap-3 sm:gap-6 p-3 sm:p-6 w-full"
     >
       {/* Poster Upload */}
       <div className="relative flex flex-col items-center justify-center border-2 border-dashed border-gray-300 rounded-md  min-h-[200px]">
@@ -164,7 +164,7 @@ const ProjectForm = ({ type, project }) => {
         setState={(value) => handleStateChange("category", value)}
       />
 
-      <div className="flex justify-start mt-4" onClick={handleFormSubmit}>
+      <div className="flex justify-start sm:mt-4" onClick={handleFormSubmit}>
         <Button
           title={
             submitting
