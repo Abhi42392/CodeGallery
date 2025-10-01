@@ -22,19 +22,19 @@ const PostsFilter = ({posts}) => {
     setShowCategoryDropdown(false);
   };
 
-  const finalFilteredPosts = filteredPosts.filter((post) => (
+  const finalFilteredPosts = filteredPosts?.filter((post) => (
     category === "" || post.category.toLowerCase() === category.toLowerCase()
   ))
   
   const search = (() => {
-    const filteredBySearch = posts.filter((post) =>
+    const filteredBySearch = posts?.filter((post) =>
       (post.title.toLowerCase().includes(searchTitle.toLowerCase()) || 
        post.description.toLowerCase().includes(searchTitle.toLowerCase()))
     )
     setFilteredPosts(filteredBySearch)
   })
 
-  const sortedPosts = [...finalFilteredPosts].sort((a, b) => {
+  const sortedPosts = [...finalFilteredPosts]?.sort((a, b) => {
     if (filter === "Most Recent") return new Date(b.createdAt) - new Date(a.createdAt);
     if (filter === "Older") return new Date(a.createdAt) - new Date(b.createdAt);
     if (filter === "Most Viewed") return b.views - a.views;
