@@ -25,6 +25,7 @@ const RightNav = ({ session }) => {
         className={`px-3 sm:px-6 py-2 sm:shadow-md sm:flex sm:items-center sm:gap-2 transition-all duration-300 cursor-pointer ${
           openMenu ? "sm:rounded-t-lg" : "sm:rounded-full"
         } bg-white relative`}
+        onClick={() => setOpenMenu((prev) => !prev)}
       >
         <Image
           src={session.user.image}
@@ -32,7 +33,7 @@ const RightNav = ({ session }) => {
           height={20}
           alt="User Avatar"
           className="rounded-full hover:scale-105 transition-transform duration-300 max-sm:h-8  max-sm:w-8"
-          onClick={() => setOpenMenu((prev) => !prev)}
+          
         />
 
         <div className="hidden sm:flex items-center gap-1" >

@@ -9,7 +9,7 @@ const FormField = ({ type, title, state, placeholder, isTextArea, setState }) =>
         <textarea
           placeholder={placeholder}
           value={state}
-          className="bg-gray-400 rounded-md text-white px-2 sm:px-4 py-1 outline-0"
+          className="border-2 border-gray-200  rounded-md max-sm:text-sm px-4 py-3 outline-0"
           onChange={(e) => setState(e.target.value)}
         />
       ) : (
@@ -18,7 +18,7 @@ const FormField = ({ type, title, state, placeholder, isTextArea, setState }) =>
           placeholder={placeholder}
           required
           value={state}
-          className="bg-gray-400 rounded-md text-white  px-2 sm:px-4 py-1 outline-0"
+          className="border-2 border-gray-200 rounded-md max-sm:text-sm  px-4 py-3 outline-0"
           onChange={(e) => setState(e.target.value)}
         />
       )}
