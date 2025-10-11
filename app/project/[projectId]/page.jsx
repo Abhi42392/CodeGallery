@@ -32,11 +32,13 @@ const Project = async ({ params }) => {
   const projectIdStr = _id?.toString();
 
   const isProjectOwner = session?.user?.id === userId;
-  console.log(user?.resume?.url)
+  
 
   return (
     <Modal>
-      <div className="overflow-y-auto max-h-[calc(100vh-2rem)] px-4 md:px-6 pt-6 pb-22">
+      <div className="overflow-y-auto max-h-[calc(100vh-2rem)] px-4 md:px-6 pt-6 pb-22 relative">
+        <div className="absolute  top-2 right-4" onClick={()=>router.push("/")}>x</div>
+
         {/* Header */}
         <section className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 w-full max-w-4xl mx-auto">
           {/* Creator Info */}

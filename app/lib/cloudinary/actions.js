@@ -40,34 +40,3 @@ export const deleteImageFromCloudinary=async(publicId)=>{
 
 
 
-export const uploadPDF = async (file, filename = "resume") => {
-  try {
-    const arrayBuffer = await file.arrayBuffer();
-    const buffer = Buffer.from(arrayBuffer);
-
-    const result = await new Promise((resolve, reject) => {
-      const stream = cloudinary.uploader.upload_stream(
-        {
-          resource_type: "raw",
-          folder: "pdf_uploads",
-          public_id: `${filename}_${Date.now()}`,
-        },
-        (error, result) => {
-          if (error) reject(error);
-          else resolve(result);
-        }
-      );
-
-      streamifier.createReadStream(buffer).pipe(stream);
-    });
-
-    return {
-      success: true,
-      url: result.secure_url,
-      public_id: result.public_id,
-    };
-  } catch (err) {
-    console.error("Cloudinary PDF upload error:", err.message);
-    return { success: false, error: err.message };
-  }
-};

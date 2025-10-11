@@ -1,20 +1,25 @@
+// app/api/user/update-profile/route.js
 import { NextResponse } from "next/server";
 import connectDB from "@/app/config/mongodb";
 import { auth } from "@/app/auth";
-import { uploadPDF } from "../../../lib/cloudinary/actions";
-import { uploadImage } from "../../../lib/cloudinary/actions";
+import {uploadImage } from "../../../lib/cloudinary/actions";
 import userModel from "@/app/models/userModel";
 
 export async function POST(req) {
   try {
     await connectDB();
     const session = await auth();
-    if (!session || !session.user) throw new Error("Unauthorized");
+    if (!session || !session.user) {
+      return NextResponse.json(
+        { success: false, error: "Unauthorized" },
+        { status: 401 }
+      );
+    }
 
     const fd = await req.formData();
     console.log("Processing profile update...");
 
-    // Extract fields
+    // Extract form data
     const name = fd.get("name");
     const about = fd.get("about");
     const portfolio = fd.get("portfolio");
@@ -22,108 +27,132 @@ export async function POST(req) {
     const avatarUrl = fd.get("avatarUrl");
     const email = fd.get("email");
     const skills = fd.get("skills");
-    const resume = fd.get("resume");
     const phone = fd.get("phone");
-    const organizations = fd.get("organizations"); // New field
+    const organizations = fd.get("organizations");
+    
 
-    // Parse portfolio
+    // Parse JSON fields with proper error handling
     let parsedPortfolio = [];
     try {
-      parsedPortfolio = JSON.parse(portfolio);
-    } catch {
-      throw new Error("Portfolio must be a valid JSON array");
+      parsedPortfolio = portfolio ? JSON.parse(portfolio) : [];
+    } catch (e) {
+      return NextResponse.json(
+        { success: false, error: "Invalid portfolio data format" },
+        { status: 400 }
+      );
     }
 
-    // Parse skills
     let parsedSkills = [];
     try {
-      parsedSkills = JSON.parse(skills);
-    } catch {
-      throw new Error("Skills must be a valid JSON array");
+      parsedSkills = skills ? JSON.parse(skills) : [];
+    } catch (e) {
+      return NextResponse.json(
+        { success: false, error: "Invalid skills data format" },
+        { status: 400 }
+      );
     }
 
-    // Parse organizations - new parsing logic
     let parsedOrganizations = [];
     try {
-      parsedOrganizations = JSON.parse(organizations);
-      
-      // Validate and format organization dates
-      parsedOrganizations = parsedOrganizations.map(org => ({
-        name: org.name || "",
-        jobTitle: org.jobTitle || "",
-        startDate: org.startDate ? new Date(org.startDate) : null,
-        endDate: org.endDate && !org.isCurrent ? new Date(org.endDate) : null,
-        isCurrent: org.isCurrent || false
-      }));
-      
-      // Filter out empty organizations
-      parsedOrganizations = parsedOrganizations.filter(
-        org => org.name && org.jobTitle && org.startDate
-      );
-      
-    } catch {
-      throw new Error("Organizations must be a valid JSON array");
-    }
-
-    // Upload resume
-    let finalResume = resume;
-    if (resume instanceof File) {
-      const response = await uploadPDF(resume);
-      if (!response.success) {
-        throw new Error("Failed to upload resume PDF");
+      if (organizations) {
+        parsedOrganizations = JSON.parse(organizations);
+        
+        // Validate and format organization dates
+        parsedOrganizations = parsedOrganizations.map(org => ({
+          name: org.name || "",
+          jobTitle: org.jobTitle || "",
+          startDate: org.startDate ? new Date(org.startDate) : null,
+          endDate: org.endDate && !org.isCurrent ? new Date(org.endDate) : null,
+          isCurrent: org.isCurrent || false
+        }));
+        
+        // Filter out empty organizations
+        parsedOrganizations = parsedOrganizations.filter(
+          org => org.name && org.jobTitle && org.startDate
+        );
       }
-      finalResume = {
-        fileName: resume.name,
-        url: response.url,
-      };
+    } catch (e) {
+      return NextResponse.json(
+        { success: false, error: "Invalid organizations data format" },
+        { status: 400 }
+      );
     }
 
-    // Upload avatar image
+    
+
+    // Handle avatar image upload
     let finalImageUrl = avatarUrl;
     if (avatarUrl instanceof File) {
-      const imageResponse = await uploadImage(avatarUrl);
-      if (!imageResponse?.url) throw new Error("Failed to upload profile image");
-      finalImageUrl = imageResponse.url;
+      try {
+        const imageResponse = await uploadImage(avatarUrl);
+        if (!imageResponse?.url) {
+          throw new Error("No URL returned from image upload");
+        }
+        finalImageUrl = imageResponse.url;
+      } catch (imageError) {
+        console.error("Avatar upload failed:", imageError);
+        return NextResponse.json(
+          { success: false, error: "Failed to upload profile image" },
+          { status: 500 }
+        );
+      }
+    } else if (typeof avatarUrl === 'string') {
+      finalImageUrl = avatarUrl;
     }
 
+    // Prepare update data
     const updatedData = {
-      name,
-      about,
-      headline,
+      name: name || "",
+      about: about || "",
+      headline: headline || "",
       portfolio: parsedPortfolio,
       avatarUrl: finalImageUrl,
-      resume: finalResume,
-      email,
+      email: email || "",
       skills: parsedSkills,
-      phone,
-      organizations: parsedOrganizations, 
+      phone: phone || "",
+      organizations: parsedOrganizations,
     };
 
-    console.log("Updating user data:", updatedData);
+    // Remove null/undefined fields
+    Object.keys(updatedData).forEach(key => {
+      if (updatedData[key] === null || updatedData[key] === undefined) {
+        delete updatedData[key];
+      }
+    });
+
     
     const updatedUser = await userModel.findByIdAndUpdate(
       session.user.id,
       updatedData,
       { 
-        new: true, 
+        new: true,
         runValidators: true,
       }
     );
+
+    if (!updatedUser) {
+      return NextResponse.json(
+        { success: false, error: "User not found" },
+        { status: 404 }
+      );
+    }
 
     console.log("Profile updated successfully");
     
     return NextResponse.json({ 
       success: true, 
+      message: "Profile updated successfully",
       data: updatedUser 
     });
     
   } catch (err) {
-    console.error("❌ Error updating profile:", err.message);
-    return NextResponse.json({ 
-      success: false, 
-      error: err.message 
-    }, { 
-      status: 400 
-    });
+    console.error("❌ Error updating profile:", err);
+    return NextResponse.json(
+      { 
+        success: false, 
+        error: err.message || "An unexpected error occurred" 
+      },
+      { status: 500 }
+    );
   }
 }

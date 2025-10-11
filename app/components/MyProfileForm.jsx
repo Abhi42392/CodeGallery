@@ -1,10 +1,10 @@
 "use client";
 import React, { useState } from "react";
 
-// Icon Components (since they're imported in the original)
+// Icon Components
 const Pencil = ({ isDisable }) => (
   <svg 
-    className={`w-5 h-5 ${isDisable ? 'text-gray-400' : 'text-purple-600 hover:text-purple-700'}`}
+    className={`w-3 h-3 sm:w-5 sm:h-5 ${isDisable ? 'text-gray-400' : 'text-purple-600 hover:text-purple-700'}`}
     fill="none" 
     stroke="currentColor" 
     viewBox="0 0 24 24"
@@ -25,23 +25,60 @@ const LoadingBar = () => (
   </div>
 );
 
-// Simplified SkillSection component
+// Success Message Component
+const SuccessMessage = ({ message }) => (
+  <div className="mx-6 mb-4 p-3 bg-green-50 border border-green-300 text-green-700 rounded-md flex items-center gap-2">
+    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+    </svg>
+    {message}
+  </div>
+);
+
+// Error Message Component
+const ErrorMessage = ({ error }) => (
+  <div className="mx-6 mb-4 p-3 bg-red-50 border border-red-300 text-red-700 rounded-md flex items-center gap-2">
+    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+    </svg>
+    {error}
+  </div>
+);
+
+// SkillSection component
 const SkillSection = ({ skills, removeSkill, addSkill, Edited }) => {
   const [isEditing, setIsEditing] = useState(false);
   const [newSkill, setNewSkill] = useState("");
+  const [skillError, setSkillError] = useState("");
+
+  const handleAddSkill = () => {
+    const trimmedSkill = newSkill.trim();
+    if (!trimmedSkill) {
+      setSkillError("Please enter a skill");
+      return;
+    }
+    if (skills.includes(trimmedSkill)) {
+      setSkillError("This skill already exists");
+      return;
+    }
+    addSkill(trimmedSkill);
+    setNewSkill("");
+    setSkillError("");
+    Edited(true);
+  };
 
   return (
-    <div className="px-6 pb-6 pt-4 rounded-xl shadow-md bg-white relative mt-6">
+    <div className="px-3 sm:px-6 pb-3 sm:pb-6 pt-2 sm:pt-4 rounded-xl shadow-md bg-white relative mt-6 max-lg:w-[90vw]">
       <div className="flex items-center justify-between mb-4">
-        <h1 className="text-2xl font-semibold text-gray-800">Skills</h1>
+        <h1 className="text-xl sm:text-2xl font-semibold text-gray-800">Skills</h1>
         <div onClick={() => { setIsEditing(!isEditing); Edited(true); }} className="cursor-pointer">
           <Pencil isDisable={isEditing} />
         </div>
       </div>
       <div className="flex flex-wrap gap-2">
         {skills.map((skill, idx) => (
-          <div key={idx} className="px-3 py-1 bg-purple-100 text-purple-700 rounded-full flex items-center gap-2">
-            <span>{skill}</span>
+          <div key={idx} className="px-2 sm:px-3 py-1 bg-purple-100 text-purple-700 rounded-full flex items-center gap-2">
+            <span className="max-sm:text-sm">{skill}</span>
             {isEditing && (
               <button onClick={() => { removeSkill(skill); Edited(true); }} className="text-red-500 hover:text-red-600">
                 ×
@@ -50,21 +87,23 @@ const SkillSection = ({ skills, removeSkill, addSkill, Edited }) => {
           </div>
         ))}
         {isEditing && (
-          <div className="flex gap-2">
+          <div className="flex gap-2 items-center">
             <input
               type="text"
               value={newSkill}
-              onChange={(e) => setNewSkill(e.target.value)}
+              onChange={(e) => {
+                setNewSkill(e.target.value);
+                setSkillError("");
+              }}
               onKeyPress={(e) => {
-                if (e.key === 'Enter' && newSkill.trim()) {
-                  addSkill(newSkill.trim());
-                  setNewSkill("");
-                  Edited(true);
+                if (e.key === 'Enter') {
+                  handleAddSkill();
                 }
               }}
               placeholder="Add skill..."
               className="px-3 py-1 border border-purple-300 rounded-full outline-none focus:border-purple-500"
             />
+            {skillError && <span className="text-red-500 text-sm">{skillError}</span>}
           </div>
         )}
       </div>
@@ -81,7 +120,6 @@ const MyProfileForm = ({ user = {} }) => {
     email: user.email || "",
     about: user.about || "",
     portfolio: user.portfolio || [],
-    resume: user.resume || undefined,
     skills: user.skills || [],
     organizations: user.organizations || []
   });
@@ -93,20 +131,47 @@ const MyProfileForm = ({ user = {} }) => {
   const [organizationsEdit, setOrganizationsEdit] = useState(false);
   const [showProfilePic, setShowProfilePic] = useState(user.avatarUrl || "/api/placeholder/250/250");
   const [nameHeadlineEdit, setNameHeadLineEdit] = useState(false);
-  const [error, setError] = useState(false);
+  const [error, setError] = useState("");
+  const [successMessage, setSuccessMessage] = useState("");
   const [phone, setPhone] = useState(userData.phone || "");
   const [isLoading, setIsLoading] = useState(false);
+  const [portfolioErrors, setPortfolioErrors] = useState({});
 
   const handleStateChange = (e) => {
     const field = e.target.id;
     const value = e.target.value;
     setUserData((prev) => ({ ...prev, [field]: value }));
+    setError(""); // Clear error on change
   };
 
   const handlePortfolioChange = (index, field, value) => {
     const updated = [...userData.portfolio];
     updated[index][field] = value;
     setUserData((prev) => ({ ...prev, portfolio: updated }));
+    
+    // Validate portfolio field
+    const errors = { ...portfolioErrors };
+    if (!value?.trim()) {
+      if (!errors[index]) errors[index] = {};
+      errors[index][field] = `${field} is required`;
+    } else {
+      if (field === 'url') {
+        // Basic URL validation
+        try {
+          new URL(value.trim());
+          if (errors[index]?.url) delete errors[index].url;
+        } catch {
+          if (!errors[index]) errors[index] = {};
+          errors[index].url = 'Please enter a valid URL';
+        }
+      } else {
+        if (errors[index]?.[field]) delete errors[index][field];
+      }
+      if (errors[index] && Object.keys(errors[index]).length === 0) {
+        delete errors[index];
+      }
+    }
+    setPortfolioErrors(errors);
   };
 
   const handleOrganizationChange = (index, field, value) => {
@@ -119,6 +184,16 @@ const MyProfileForm = ({ user = {} }) => {
   };
 
   const addOrganization = () => {
+    // Check if there are empty organizations
+    const hasEmptyOrg = userData.organizations.some(
+      org => !org.name?.trim() || !org.jobTitle?.trim()
+    );
+    
+    if (hasEmptyOrg) {
+      setError("Please complete existing organizations before adding new ones");
+      return;
+    }
+    
     const newOrg = {
       name: "",
       jobTitle: "",
@@ -132,6 +207,47 @@ const MyProfileForm = ({ user = {} }) => {
     }));
     setIsEdited(true);
     setOrganizationsEdit(true);
+    setError("");
+  };
+
+  const addPortfolioItem = () => {
+    // Check if there are empty portfolio items
+    const hasEmptyItem = userData.portfolio.some(
+      item => !item.site?.trim() || !item.url?.trim()
+    );
+    
+    if (hasEmptyItem) {
+      setError("Please complete existing portfolio items before adding new ones");
+      return;
+    }
+    
+    const updated = [...userData.portfolio];
+    updated.push({ site: "", url: "" });
+    setUserData((prev) => ({ ...prev, portfolio: updated }));
+    setPortfolioEdit(true);
+    setIsEdited(true);
+    setError("");
+  };
+
+  const removePortfolioItem = (index) => {
+    const updated = userData.portfolio.filter((_, i) => i !== index);
+    setUserData((prev) => ({ ...prev, portfolio: updated }));
+    
+    // Clean up errors for removed item
+    const errors = { ...portfolioErrors };
+    delete errors[index];
+    // Reindex errors
+    const newErrors = {};
+    Object.keys(errors).forEach(key => {
+      const numKey = parseInt(key);
+      if (numKey > index) {
+        newErrors[numKey - 1] = errors[key];
+      } else {
+        newErrors[key] = errors[key];
+      }
+    });
+    setPortfolioErrors(newErrors);
+    setIsEdited(true);
   };
 
   const calculateDuration = (startDate, endDate, isCurrent) => {
@@ -178,24 +294,30 @@ const MyProfileForm = ({ user = {} }) => {
   };
 
   const handleChangeImage = (e) => {
-    setIsEdited(true);
     const file = e.target.files[0];
+    if (!file) return;
+    
+    // Validate image file
+    const validTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp'];
+    if (!validTypes.includes(file.type)) {
+      setError('Please upload a valid image file (JPEG, PNG, GIF, or WebP)');
+      e.target.value = '';
+      return;
+    }
+    
+    // Validate file size (5MB)
+    const maxSize = 5 * 1024 * 1024;
+    if (file.size > maxSize) {
+      setError('Image size must be less than 5MB');
+      e.target.value = '';
+      return;
+    }
+    
+    setError("");
+    setIsEdited(true);
     const imageUrl = URL.createObjectURL(file);
     setShowProfilePic(imageUrl);
     setUserData((prev) => ({ ...prev, avatarUrl: file }));
-  };
-
-  const uploadResume = (e) => {
-    const file = e.target.files[0];
-    if (!file) return;
-    setUserData((prev) => ({
-      ...prev,
-      resume: {
-        fileName: file.name,
-        url: file,
-      },
-    }));
-    setIsEdited(true);
   };
 
   const removeSkill = (skillToRemove) => {
@@ -217,26 +339,50 @@ const MyProfileForm = ({ user = {} }) => {
 
   const handlePhoneChange = (e) => {
     setPhone(e.target.value);
+    setError("");
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    
     try {
       setIsLoading(true);
+      setError("");
+      setSuccessMessage("");
+      
+      // Validate required fields
+      if (!userData.name?.trim()) {
+        setError("Name is required");
+        setIsLoading(false);
+        return;
+      }
+      
+      // Clean and validate data
+      const validPortfolio = userData.portfolio.filter(item => 
+        item.site?.trim() && item.url?.trim()
+      );
+      
+      const validOrganizations = userData.organizations.filter(org =>
+        org.name?.trim() && org.jobTitle?.trim() && org.startDate
+      );
+      
       const fd = new FormData();
-      fd.append("name", userData.name);
+      fd.append("name", userData.name.trim());
       fd.append("phone", phone);
       fd.append("headline", userData.headline);
       fd.append("email", userData.email);
       fd.append("about", userData.about);
-      fd.append("avatarUrl", userData.avatarUrl);
-
-      if (userData.resume?.url instanceof File) {
-        fd.append("resume", userData.resume.url);
+      
+      // Handle avatar
+      if (userData.avatarUrl instanceof File) {
+        fd.append("avatarUrl", userData.avatarUrl);
+      } else {
+        fd.append("avatarUrl", userData.avatarUrl || '');
       }
+      
       fd.append("skills", JSON.stringify(userData.skills));
-      fd.append("portfolio", JSON.stringify(userData.portfolio));
-      fd.append("organizations", JSON.stringify(userData.organizations));
+      fd.append("portfolio", JSON.stringify(validPortfolio));
+      fd.append("organizations", JSON.stringify(validOrganizations));
 
       const response = await fetch(`${process.env.NEXT_PUBLIC_SITE_URL}/api/user/update-profile`, {
         method: "POST",
@@ -244,39 +390,60 @@ const MyProfileForm = ({ user = {} }) => {
       });
 
       const data = await response.json();
+      
       if (!data.success) {
-        setError(data.error);
+        setError(data.error || 'Failed to update profile');
         setIsLoading(false);
-        setIsEdited(false);
         return;
       }
+      
+      // Update state with cleaned data and server response
+      setUserData(prev => ({
+        ...prev,
+        portfolio: validPortfolio,
+        organizations: validOrganizations,
+        avatarUrl: data.data?.avatarUrl || prev.avatarUrl
+      }));
+      
+      // Update profile pic if new URL from server
+      if (data.data?.avatarUrl && typeof data.data.avatarUrl === 'string') {
+        setShowProfilePic(data.data.avatarUrl);
+      }
+      
       setIsEdited(false);
       setIsLoading(false);
-      console.log("User Profile updated successfully");
+      setSuccessMessage("Profile updated successfully!");
+      
+      // Clear success message after 3 seconds
+      setTimeout(() => {
+        setSuccessMessage("");
+      }, 3000);
+      
     } catch (err) {
       console.error("Error submitting profile:", err);
-      setError("Unexpected error occurred");
+      setError("Unexpected error occurred. Please try again.");
+      setIsLoading(false);
     }
   };
 
   return (
-    <div className="pt-[66px] ml-[20vw] max-w-[55vw]">
+    <div className="pt-[66px] ml-[5vw] lg:ml-[20vw] max-w-[55vw]">
       <div>
         {/* Top Profile Section */}
-        <div className="relative -translate-y-1/4 flex gap-8 w-full">
+        <div className="sm::relative sm:-translate-y-1/4 flex max-sm:flex-col gap-8 max-sm:w-[150px] w-full">
           <div className="relative">
             <img
               src={showProfilePic}
               height={250}
               width={250}
-              className="rounded-3xl ml-10"
+              className="rounded-3xl w-[150px] md:w-[200px] lg:w-[250px] object-cover"
               alt="profile pic"
             />
-            <div className="absolute top-2 right-4 cursor-pointer">
-              <label htmlFor="avatarUrl" className="cursor-pointer">
+            <div className="absolute top-2 right-2 sm:right-4 cursor-pointer">
+              <label htmlFor="avatarUrl" className="cursor-pointer bg-white rounded-full p-2 shadow-md block">
                 <input
                   type="file"
-                  accept="image/*"
+                  accept="image/jpeg,image/jpg,image/png,image/gif,image/webp"
                   hidden
                   id="avatarUrl"
                   onChange={handleChangeImage}
@@ -285,8 +452,8 @@ const MyProfileForm = ({ user = {} }) => {
               </label>
             </div>
           </div>
-          <div className="relative">
-            <div className="absolute bottom-0 w-[450px]">
+          <div className="sm:relative">
+            <div className="sm:absolute sm:bottom-0 max-sm:w-[80vw] w-[450px]">
               <div>
                 {nameHeadlineEdit ? (
                   <>
@@ -299,7 +466,9 @@ const MyProfileForm = ({ user = {} }) => {
                         className="outline-none bg-transparent text-xl font-bold"
                         placeholder="Your Name"
                       />
-                      <Pencil isDisable={nameHeadlineEdit} />
+                      <div onClick={() => setNameHeadLineEdit(false)} className="cursor-pointer">
+                        <Pencil isDisable={nameHeadlineEdit} />
+                      </div>
                     </span>
 
                     <textarea
@@ -307,14 +476,14 @@ const MyProfileForm = ({ user = {} }) => {
                       rows={3}
                       value={userData.headline}
                       onChange={handleStateChange}
-                      className="w-full outline-none bg-transparent text-sm text-gray-700 resize-none"
+                      className="w-full outline-none bg-transparent  text-sm text-gray-700 resize-none"
                       placeholder="Your professional headline..."
                     />
                   </>
                 ) : (
                   <>
                     <span className="flex gap-2">
-                      <h2 className="font-bold text-2xl">{userData.name}</h2>
+                      <h2 className="font-bold text-2xl">{userData.name || "Your Name"}</h2>
                       <button
                         type="button"
                         onClick={() => {
@@ -325,7 +494,7 @@ const MyProfileForm = ({ user = {} }) => {
                         <Pencil isDisable={nameHeadlineEdit} />
                       </button>
                     </span>
-                    <p className="text-gray-600 text-sm whitespace-pre-wrap">
+                    <p className="text-gray-600 text-sm whitespace-break-spaces ">
                       {userData.headline || "Your professional headline"}
                     </p>
                   </>
@@ -333,26 +502,31 @@ const MyProfileForm = ({ user = {} }) => {
               </div>
 
               <button
-                className="border-2 border-black px-6 rounded-md mt-3 
+                className="border-2 border-black px-6 py-2 rounded-md mt-3 
                 disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:bg-white 
-                disabled:hover:text-black hover:text-white hover:bg-black cursor-pointer"
+                disabled:hover:text-black hover:text-white hover:bg-black cursor-pointer transition-colors"
                 disabled={!isEdited || isLoading}
                 type="button"
                 onClick={handleSubmit}
               >
-                Update changes
+                {isLoading ? "Updating..." : "Update changes"}
               </button>
             </div>
           </div>
         </div>
+        
         {isLoading && <LoadingBar />}
+        {error && <ErrorMessage error={error} />}
+        {successMessage && <SuccessMessage message={successMessage} />}
 
         {/* Section: About Me */}
         <Section
           title="About Me"
           onEdit={() => {
-            setAboutEdit(true);
-            setIsEdited(true);
+            setAboutEdit(!aboutEdit);
+            if (aboutEdit) {
+              setIsEdited(true);
+            }
           }}
           isEditing={aboutEdit}
         >
@@ -376,8 +550,10 @@ const MyProfileForm = ({ user = {} }) => {
         <Section
           title="Contact Details"
           onEdit={() => {
-            setContactEdit(true);
-            setIsEdited(true);
+            setContactEdit(!contactEdit);
+            if (contactEdit) {
+              setIsEdited(true);
+            }
           }}
           isEditing={contactEdit}
         >
@@ -406,8 +582,10 @@ const MyProfileForm = ({ user = {} }) => {
         <Section
           title="Organizations"
           onEdit={() => {
-            setOrganizationsEdit(true);
-            setIsEdited(true);
+            setOrganizationsEdit(!organizationsEdit);
+            if (organizationsEdit) {
+              setIsEdited(true);
+            }
           }}
           isEditing={organizationsEdit}
         >
@@ -506,61 +684,96 @@ const MyProfileForm = ({ user = {} }) => {
             </div>
           ))}
           
-          {/* Add New Organization Button */}
           <button
             type="button"
             onClick={addOrganization}
-            className="text-purple-600 mt-2 font-bold w-full mx-auto hover:text-purple-700 flex items-center justify-center gap-2"
+            className="text-purple-600 mt-2 font-bold w-full mx-auto hover:text-purple-700 flex items-center justify-center gap-2 transition-colors"
           >
             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
             </svg>
-            <span>Add New Organization</span>
+            <span className="max-sm:text-sm">Add New Organization</span>
           </button>
         </Section>
 
         {/* Skills Section */}
-        <SkillSection skills={userData.skills} removeSkill={removeSkill} addSkill={addSkill} Edited={setIsEdited} />
+        <SkillSection 
+          skills={userData.skills} 
+          removeSkill={removeSkill} 
+          addSkill={addSkill} 
+          Edited={setIsEdited} 
+        />
 
         {/* Portfolio Section */}
         <Section
           title="Portfolio"
           onEdit={() => {
-            setPortfolioEdit(true);
-            setIsEdited(true);
+            setPortfolioEdit(!portfolioEdit);
+            if (portfolioEdit) {
+              setIsEdited(true);
+            }
           }}
           isEditing={portfolioEdit}
         >
           {portfolioEdit ? (
-            userData.portfolio.map((item, idx) => (
-              <div key={idx} className="flex gap-4 items-center">
-                <input
-                  type="text"
-                  value={item.site}
-                  onChange={(e) => handlePortfolioChange(idx, "site", e.target.value)}
-                  className="w-1/6 border border-purple-500 outline-0 rounded-md px-3 py-2 focus:ring-purple-300 focus:ring-2"
-                  placeholder="Site name"
-                />
-                <input
-                  type="url"
-                  value={item.url}
-                  onChange={(e) => handlePortfolioChange(idx, "url", e.target.value)}
-                  className="w-2/3 border border-purple-500 outline-0 rounded-md px-3 py-2 focus:ring-purple-300 focus:ring-2"
-                  placeholder="https://example.com"
-                />
-              </div>
-            ))
+            <>
+              {userData.portfolio.map((item, idx) => (
+                <div key={idx} className="space-y-1">
+                  <div className="flex gap-4 items-start">
+                    <div className="w-1/4">
+                      <input
+                        type="text"
+                        value={item.site}
+                        onChange={(e) => handlePortfolioChange(idx, "site", e.target.value)}
+                        className={`w-full border ${
+                          portfolioErrors[idx]?.site ? 'border-red-500' : 'border-purple-500'
+                        } outline-0 rounded-md max-sm:px-1 px-3 max-sm:py-1 py-2 focus:ring-2 max-sm:text-xs ${
+                          portfolioErrors[idx]?.site ? 'focus:ring-red-300' : 'focus:ring-purple-300'
+                        }`}
+                        placeholder="Site name"
+                      />
+                      {portfolioErrors[idx]?.site && (
+                        <p className="text-red-500 text-xs mt-1">{portfolioErrors[idx].site}</p>
+                      )}
+                    </div>
+                    <div className="flex-1">
+                      <input
+                        type="url"
+                        value={item.url}
+                        onChange={(e) => handlePortfolioChange(idx, "url", e.target.value)}
+                        className={`w-full border ${
+                          portfolioErrors[idx]?.url ? 'border-red-500' : 'border-purple-500'
+                        } outline-0 rounded-md max-sm:px-1 px-3 max-sm:py-1 py-2 focus:ring-2 max-sm:text-xs ${
+                          portfolioErrors[idx]?.url ? 'focus:ring-red-300' : 'focus:ring-purple-300'
+                        }`}
+                        placeholder="https://example.com"
+                      />
+                      {portfolioErrors[idx]?.url && (
+                        <p className="text-red-500 text-xs mt-1">{portfolioErrors[idx].url}</p>
+                      )}
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => removePortfolioItem(idx)}
+                      className="max-sm:p-1 p-2 text-red-500 hover:text-red-600 hover:bg-red-50 rounded transition-colors"
+                    >
+                      <Wrong />
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </>
           ) : (
             userData.portfolio.map((item, idx) => (
               <div key={idx} className="flex gap-4 items-center">
-                <p className="w-1/6 px-3 py-2 rounded-md border border-purple-200 bg-gray-50">
+                <p className="w-1/4 max-sm:px-1 px-3 max-sm:py-1 py-2 rounded-md border border-purple-200 bg-gray-50 max-sm:text-xs">
                   {item.site}
                 </p>
                 <a
                   href={item.url}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="w-2/3 px-3 py-2 rounded-md border border-purple-200 bg-gray-50 text-purple-700"
+                  className="flex-1 max-sm:px-1 px-3 max-sm:py-1 max-sm:text-xs py-2 rounded-md border border-purple-200 bg-gray-50 text-purple-700 hover:bg-purple-50 transition-colors"
                 >
                   {item.url}
                 </a>
@@ -568,68 +781,24 @@ const MyProfileForm = ({ user = {} }) => {
             ))
           )}
 
-          {/* Add New Portfolio Button */}
           <button
             type="button"
-            onClick={() => {
-              const updated = [...userData.portfolio];
-              updated.push({ site: "", url: "" });
-              setUserData((prev) => ({ ...prev, portfolio: updated }));
-              setIsEdited(true);
-            }}
-            className="text-purple-600 mt-2 font-bold w-full mx-auto"
+            onClick={addPortfolioItem}
+            className="text-purple-600 mt-2 font-bold w-full mx-auto hover:text-purple-700 transition-colors"
           >
-            <p className="cursor-pointer mt-2">+ Add New Link</p>
+            <p className="cursor-pointer mt-2 max-sm:text-sm">+ Add New Link</p>
           </button>
         </Section>
-
-        {/* Resume Upload Section */}
-        <div className="px-6 pb-6 pt-4 rounded-xl shadow-md bg-white relative mt-6">
-          <div className="flex items-center justify-between mb-4">
-            <h1 className="text-2xl font-semibold text-gray-800">Resume</h1>
-          </div>
-          {userData.resume?.fileName ? (
-            <div className="flex items-center justify-between bg-gray-100 px-4 py-2 rounded-md">
-              <p className="text-gray-800">{userData.resume.fileName}</p>
-              <button
-                type="button"
-                onClick={() => {
-                  setUserData((prev) => ({ ...prev, resume: "" }));
-                  setIsEdited(true);
-                }}
-                title="Remove Resume"
-              >
-                <Wrong />
-              </button>
-            </div>
-          ) : (
-            <div className="flex items-center gap-4">
-              <label
-                htmlFor="resume-upload"
-                className="cursor-pointer flex items-center gap-2 text-purple-600 hover:underline"
-              >
-                <input
-                  type="file"
-                  accept=".pdf,.doc,.docx"
-                  hidden
-                  id="resume-upload"
-                  onChange={uploadResume}
-                />
-                📄 <span>Upload Resume</span>
-              </label>
-            </div>
-          )}
-        </div>
       </div>
     </div>
   );
 };
 
-// 🔧 Reusable Section Component
+// Reusable Section Component
 const Section = ({ title, onEdit, isEditing, children }) => (
-  <div className="px-6 pb-6 pt-4 rounded-xl shadow-md bg-white relative mt-6">
+  <div className="px-3 sm:px-6 pb-3 sm:pb-6 sm:pt-2 pt-4 rounded-xl shadow-md  bg-white relative mt-6 max-lg:w-[90vw]">
     <div className="flex items-center justify-between mb-4">
-      <h1 className="text-2xl font-semibold text-gray-800">{title}</h1>
+      <h1 className="text-xl sm:text-2xl font-semibold text-gray-800">{title}</h1>
       <div onClick={onEdit} className="cursor-pointer">
         <Pencil isDisable={isEditing} />
       </div>

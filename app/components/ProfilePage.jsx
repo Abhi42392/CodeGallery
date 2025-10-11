@@ -1,7 +1,7 @@
+
 import Image from 'next/image'
-import Link from 'next/link'
-import Button from './Button'
 import ProjectCard from './ProjectCard'
+
 
 const ProfilePage = ({ user,projects}) =>{
   const plainUser = {
@@ -19,52 +19,25 @@ const ProfilePage = ({ user,projects}) =>{
           src={user.avatarUrl}
           width={100}
           height={100}
-          className="rounded-full"
+          className="rounded-full  max-sm:w-[80px]"
           alt="user image"
         />
-        <p className="text-4xl font-bold">{user.name}</p>
-        <p className="text-3xl md:text-5xl font-extrabold max-w-lg mt-4">
-          I’m Software Engineer at JSM 👋
+        <p className="text-3xl sm:text-4xl font-bold">{user.name}</p>
+        <p className="text-3xl md:text-4xl font-extrabold sm:mt-4">
+          I’m Software Engineer at JSM 
         </p>
-
-        <div className="flex gap-4 mt-6 flex-wrap">
-          
-          <a
-            href={user?.resume?.url}
-            download="resume.pdf"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-blue-600 underline"
-          >
-            
-
-            <Button
-              title="Resume"
-              leftIcon="/download_icon.png"
-              bgColor="bg-gray-200"
-              textColor="text-black"
-            />
-          </a>
-
-          <Link href={`mailto:${user.email}`}>
-            <Button title="Hire Me" leftIcon="/email.svg" />
-          </Link>
+        <a 
+          href={`https://mail.google.com/mail/?view=cm&to=${user.email}`} 
+          target="_blank"
+        >
+          <button className='bg-purple-500 text-lg sm:text-2xl text-white font-bold px-2 sm:px-4 py-1 sm:py-2 rounded-md cursor-pointer'>
+            Hire me
+          </button>
+        </a>
         </div>
       </div>
 
-      {/* Right Column: Featured Project Image */}
-      <div className="w-full flex justify-center lg:justify-end">
-        <Image
-          src={
-             '/profile-post.png'
-          }
-          alt="project image"
-          width={739}
-          height={554}
-          className="rounded-xl object-contain"
-        />
-      </div>
-    </div>
+
 
     {/* Recent Work Section */}
     <div className="w-full mt-16 lg:mt-28">
