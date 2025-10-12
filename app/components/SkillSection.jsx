@@ -14,7 +14,7 @@ const SkillSection = ({ skills, removeSkill, addSkill, Edited }) => {
 
   return (
     <div className="mb-6">
-      <div className="flex flex-col gap-4 px-6 pb-6 pt-4 rounded-xl shadow-md bg-white relative mt-6">
+      <div className="flex flex-col gap-4 px-6 pb-6 pt-4 rounded-xl shadow-md bg-white relative mt-6 max-lg:w-[90vw]">
         <h1 className="text-2xl font-semibold text-gray-800">Skills</h1>
 
         <div className="flex flex-wrap gap-2">
@@ -74,8 +74,8 @@ const SkillSection = ({ skills, removeSkill, addSkill, Edited }) => {
           onClick={() => {setSkillEdit(true),Edited(true)}}
         >
           {skillEdit?
-          (<p className='text-purple-600 text-3xl opacity-50 font-bold cursor-not-allowed outline-0'>+</p>)
-          :(<p className='text-purple-600 text-3xl font-bold outline-0'>+</p>)
+          (<p className='text-purple-600 text-xl sm:text-3xl opacity-50 font-bold cursor-not-allowed outline-0'>+</p>)
+          :(<p className='text-purple-600 text-xl sm:text-3xl font-bold outline-0'>+</p>)
           }
         </div>
       </div>

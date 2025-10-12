@@ -18,14 +18,10 @@ const Footer = () => {
   }
 
   return (
-    <footer className='px-6 pb-2 max-sm:mt-4'>
-      <h1 className='text-2xl font-bold'>Code Gallery</h1>
-      <div className='flex justify-between'>
-        <p>@ 2025, Flexibble all copy rights reserved.</p>
-        <p className='flex gap-2 text-gray-600'>
-          <span className='text-black'>10,214</span>
-          projects submitted
-        </p>
+    <footer className='px-3 sm:px-6 pb-2 py-2 mt-4 sm:mt-8 bg-black text-white'>
+      <div className=''>
+        <h1 className='text-xl sm:text-2xl font-bold'>Code Gallery</h1>
+        <p className='max-sm:text-xs text-gray-200'>Show your work to the world</p>
       </div>
     </footer>
   )

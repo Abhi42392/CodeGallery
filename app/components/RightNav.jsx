@@ -24,7 +24,7 @@ const RightNav = ({ session }) => {
       <div 
         className={`px-3 sm:px-6 py-2 sm:shadow-md sm:flex sm:items-center sm:gap-2 transition-all duration-300 cursor-pointer ${
           openMenu ? "sm:rounded-t-lg" : "sm:rounded-full"
-        } bg-white relative`}
+        } sm:bg-white relative`}
         onClick={() => setOpenMenu((prev) => !prev)}
       >
         <Image
@@ -78,17 +78,12 @@ const RightNav = ({ session }) => {
           }`}
           style={{ transformOrigin: "top" }}
         >
-          <Link href="/my-profile" onClick={()=>{setOpenMenu(false)}}>
+          <Link href="/my-profile">
             <p className="text-gray-700 py-2 whitespace-nowrap hover:text-black cursor-pointer transition-colors">
               My Profile
             </p>
           </Link>
-          <p
-            className="text-gray-700 pb-2 hover:text-black cursor-pointer transition-colors"
-            onClick={() => signOut()}
-          >
-            Logout
-          </p>
+          
           <Link href="/create-project">
             <p
             className="text-gray-700 pb-2 hover:text-black cursor-pointer transition-colors whitespace-nowrap"
@@ -96,6 +91,12 @@ const RightNav = ({ session }) => {
             Share Work
           </p>
           </Link>
+          <p
+            className="text-gray-700 pb-2 hover:text-black cursor-pointer transition-colors"
+            onClick={() => signOut()}
+          >
+            Logout
+          </p>
         </div>
       </div>
     </div>

@@ -372,7 +372,7 @@ const MyProfileForm = ({ user = {} }) => {
               src={showProfilePic}
               height={250}
               width={250}
-              className="rounded-3xl w-[150px] md:w-[200px] lg:w-[250px] object-cover"
+              className="rounded-full sm:rounded-3xl w-[150px] md:w-[200px] lg:w-[250px] object-cover"
               alt="profile pic"
             />
             <div className="absolute top-2 right-2 sm:right-4 cursor-pointer">
@@ -438,7 +438,7 @@ const MyProfileForm = ({ user = {} }) => {
               </div>
 
               <button
-                className="border-2 border-black px-6 py-2 rounded-md mt-3 
+                className="border-2 border-black px-3 py-1 text-sm sm:px-6 sm:py-2 rounded-md mt-2 sm:mt-3
                 disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:bg-white 
                 disabled:hover:text-black hover:text-white hover:bg-black cursor-pointer transition-colors"
                 disabled={!isEdited || isLoading}
