@@ -60,20 +60,21 @@ const ProfilePage = ({ user,projects}) =>{
           alt="user image"
         />
         <p className="text-3xl sm:text-4xl font-bold">{user.name}</p>
-        <p>
+        {userData.headline&&<p>
           {userData.headline}
-        </p>
+        </p>}
         <a 
           href={`https://mail.google.com/mail/?view=cm&to=${user.email}`} 
           target="_blank"
         >
-          <button className='bg-purple-500 text-lg sm:text-2xl text-white font-bold px-2 sm:px-4 py-1 sm:py-2 rounded-md cursor-pointer'>
+          <button className='bg-purple-500 text-lg sm:text-xl text-white font-bold px-2 sm:px-3 py-1 sm:py-2 rounded-md cursor-pointer'>
             Hire me
           </button>
         </a>
         </div>
       </div>
       {/*About me */}
+      {userData.about&&
       <Section
           title="About Me"
         >
@@ -81,17 +82,19 @@ const ProfilePage = ({ user,projects}) =>{
               {userData.about || "Tell us about yourself"}
             </p>
         </Section>
-
+      }
         {/*Contact Details*/}
+      {(userData.phone||userData.email)&&  
         <Section
           title="Contact Details"
         >
-              <p className="text-gray-800 text-sm">
-                {userData.phone || "Add your phone number here..."}
-              </p>
-              <p className="text-gray-800 text-sm">{userData.email || "Email"}</p>
+              {userData.phone&&<p className="text-gray-800 text-sm">
+                {userData.phone}
+              </p>}
+              {userData.email&&<p className="text-gray-800 text-sm">{userData.email || "Email"}</p>}
         </Section>
-
+      }
+      {userData.organizations.length>0&&
         <Section
           title="Organizations"
         >
@@ -123,7 +126,8 @@ const ProfilePage = ({ user,projects}) =>{
             </div>
           ))}
         </Section>
-
+        }
+        {userData.portfolio.length>0&&
         <Section
           title="Portfolio"
         >
@@ -143,7 +147,24 @@ const ProfilePage = ({ user,projects}) =>{
               </div>
             ))}
         </Section>
-
+        }
+        {
+          userData.skills.length>0&&
+          <Section title="Skills">
+            {
+              <div className="flex flex-wrap gap-2">
+                {userData.skills.map((skill, index) => (
+                  <div
+                    key={index}
+                    className="flex items-center px-3 py-1 text-sm border rounded-full bg-purple-100 text-purple-800"
+                  >
+                    <span>{skill}</span>
+                  </div>
+                ))}
+              </div>
+            }
+          </Section>
+        }
 
     {/* Recent Work Section */}
     <div className="w-full mt-16 lg:mt-28">
@@ -175,7 +196,7 @@ const ProfilePage = ({ user,projects}) =>{
 }
   
 const Section = ({ title, children }) => (
-  <div className="px-3 sm:px-6 pb-3 sm:pb-6 sm:pt-2 pt-4 rounded-xl shadow-md  bg-white relative mt-6 max-lg:w-[90vw] w-full">
+  <div className="px-3 sm:px-6 pb-3 sm:pb-6 pt-2 sm:pt-4 rounded-xl border-2 border-gray-200 relative mt-6 max-lg:w-[90vw] w-full">
     <div className="flex items-center justify-between mb-4">
       <h1 className="text-xl sm:text-2xl font-semibold text-gray-800">{title}</h1>
       <div  className="cursor-pointer">

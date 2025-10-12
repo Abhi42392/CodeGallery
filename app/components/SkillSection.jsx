@@ -1,5 +1,4 @@
-import React, { useState } from 'react'
-import Pencil from '../Icons/Pencil'
+import React, { useState } from 'react' 
 import skillsData from '../constants/skillsData'
 import Wrong from '../Icons/Wrong'
 const SkillSection = ({ skills, removeSkill, addSkill, Edited }) => {
@@ -61,7 +60,10 @@ const SkillSection = ({ skills, removeSkill, addSkill, Edited }) => {
                   </div>
                 ))}
                 {filteredSuggestions.length===0&&
-                <p className="px-3 py-2 cursor-pointer hover:bg-gray-100 text-sm">No matched Skills</p>}
+                <p onClick={()=>{
+                  addSkill(inputValue)
+                  setInputValue('')
+                }} className="px-3 py-2 cursor-pointer hover:bg-gray-100 text-sm">{inputValue}</p>}
               </div>
             )}
           </div>

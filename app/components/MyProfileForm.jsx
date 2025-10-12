@@ -1,6 +1,6 @@
 "use client";
 import React, { useState } from "react";
-
+import SkillSection from "./SkillSection";
 // Icon Components
 const Pencil = ({ isDisable }) => (
   <svg 
@@ -45,71 +45,7 @@ const ErrorMessage = ({ error }) => (
   </div>
 );
 
-// SkillSection component
-const SkillSection = ({ skills, removeSkill, addSkill, Edited }) => {
-  const [isEditing, setIsEditing] = useState(false);
-  const [newSkill, setNewSkill] = useState("");
-  const [skillError, setSkillError] = useState("");
 
-  const handleAddSkill = () => {
-    const trimmedSkill = newSkill.trim();
-    if (!trimmedSkill) {
-      setSkillError("Please enter a skill");
-      return;
-    }
-    if (skills.includes(trimmedSkill)) {
-      setSkillError("This skill already exists");
-      return;
-    }
-    addSkill(trimmedSkill);
-    setNewSkill("");
-    setSkillError("");
-    Edited(true);
-  };
-
-  return (
-    <div className="px-3 sm:px-6 pb-3 sm:pb-6 pt-2 sm:pt-4 rounded-xl shadow-md bg-white relative mt-6 max-lg:w-[90vw]">
-      <div className="flex items-center justify-between mb-4">
-        <h1 className="text-xl sm:text-2xl font-semibold text-gray-800">Skills</h1>
-        <div onClick={() => { setIsEditing(!isEditing); Edited(true); }} className="cursor-pointer">
-          <Pencil isDisable={isEditing} />
-        </div>
-      </div>
-      <div className="flex flex-wrap gap-2">
-        {skills.map((skill, idx) => (
-          <div key={idx} className="px-2 sm:px-3 py-1 bg-purple-100 text-purple-700 rounded-full flex items-center gap-2">
-            <span className="max-sm:text-sm">{skill}</span>
-            {isEditing && (
-              <button onClick={() => { removeSkill(skill); Edited(true); }} className="text-red-500 hover:text-red-600">
-                ×
-              </button>
-            )}
-          </div>
-        ))}
-        {isEditing && (
-          <div className="flex gap-2 items-center">
-            <input
-              type="text"
-              value={newSkill}
-              onChange={(e) => {
-                setNewSkill(e.target.value);
-                setSkillError("");
-              }}
-              onKeyPress={(e) => {
-                if (e.key === 'Enter') {
-                  handleAddSkill();
-                }
-              }}
-              placeholder="Add skill..."
-              className="px-3 py-1 border border-purple-300 rounded-full outline-none focus:border-purple-500"
-            />
-            {skillError && <span className="text-red-500 text-sm">{skillError}</span>}
-          </div>
-        )}
-      </div>
-    </div>
-  );
-};
 
 const MyProfileForm = ({ user = {} }) => {
   const [userData, setUserData] = useState({
