@@ -10,8 +10,11 @@ const UserProfile = async ({ params }) => {
       <p className="font-black text-3xl my-2 text-red">Failed to fetch user info</p>
     )
   }
+//Clean data is the data after removing complex or non serializable data
+  const user = JSON.parse(JSON.stringify(result1?.user));
+  const projects = JSON.parse(JSON.stringify(result2?.projects));
 
-  return <ProfilePage user={result1.user} projects={result2.projects}/>
+  return <ProfilePage user={user} projects={projects} />
 }
 
 export default UserProfile

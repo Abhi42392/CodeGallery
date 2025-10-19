@@ -1,5 +1,4 @@
 "use client";
-
 import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState } from "react";
@@ -54,7 +53,7 @@ if (loading) return <LoadingData />;
     <div className="flex flex-col bg-white shadow-md hover:shadow-lg transition-shadow duration-300 rounded-2xl overflow-hidden">
       <Link href={`/project/${id}`} className="relative group">
         <Image
-          src={image}
+          src={image || null}
           width={414}
           height={314}
           className="w-full h-64 object-contain object-center transition-transform duration-300"
@@ -71,28 +70,28 @@ if (loading) return <LoadingData />;
 
       </div>
       <div className="flex items-center justify-between px-2 py-3">
-        <Link href={`/profile/${user._id}`}>
+        <Link href={`/profile/${user?._id}`}>
           <div className="flex items-center gap-2 hover:underline">
-            <Image
-              src={user.avatarUrl}
+           <Image
+              src={user?.avatarUrl || "/default-profile-icon.png"}
               width={32}
               height={32}
               className="rounded-full border"
               alt="profile image"
             />
             <p className="text-sm font-medium text-gray-800 dark:text-gray-200">
-              {user.name}
+              {user?.name}
             </p>
           </div>
         </Link>
 
         <div className="flex items-center space-x-2 text-gray-600 dark:text-gray-300">
-          <div className="flex items-center gap-1">
+          <div className="flex items-center gap-1 cursor-pointer">
             {isLiked?(<Image src="/hearth-purple.svg" width={16} height={16} alt="heart" onClick={handleLike} />):
             (<Image src="/hearth.svg" width={16} height={16} alt="heart" onClick={handleLike} />)}
             <p className="text-sm">{likes}</p>
           </div>
-          <div className="flex items-center gap-1">
+          <div className="flex items-center gap-1 cursor-pointer">
             <Image src="/eye.svg" width={16} height={16} alt="eye" />
             <p className="text-sm">{views}</p>
           </div>

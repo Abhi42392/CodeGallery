@@ -52,7 +52,7 @@ const MyProfileForm = ({ user = {} }) => {
     name: user.name || "",
     phone: user.phone || "",
     headline: user.headline || "",
-    avatarUrl: user.avatarUrl || "/api/placeholder/250/250",
+    avatarUrl: user.avatarUrl,
     email: user.email || "",
     about: user.about || "",
     portfolio: user.portfolio || [],
