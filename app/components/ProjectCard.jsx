@@ -10,6 +10,7 @@ const ProjectCard = ({ id, image, title, description,user,likesCount,viewsCount}
   const[isLiked,setIsLiked]=useState(false)
   const[loading,setLoading]=useState(true)
 
+
 const getData = async () => {
   try {
     const response = await fetch(`${process.env.NEXT_PUBLIC_SITE_URL}/api/post/get-all-data/${id}`);
@@ -17,7 +18,7 @@ const getData = async () => {
 
     setLikes(likesCount+data.likes);         
     setIsLiked(data.isLiked);      
-    setViews(data.views)
+    setViews(viewsCount+data.views)
   } catch (err) {
     console.log(err);
   }
@@ -93,6 +94,7 @@ if (loading) return <LoadingData />;
           </div>
           <div className="flex items-center gap-1 cursor-pointer">
             <Image src="/eye.svg" width={16} height={16} alt="eye" />
+            {console.log(views)}
             <p className="text-sm">{views}</p>
           </div>
         </div>

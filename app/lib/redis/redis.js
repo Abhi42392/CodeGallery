@@ -105,152 +105,35 @@ export const isUserLiked = async (postId) => {
  * Add a view for a post from current user
  * Uses Set to ensure unique views per user
  */
-export const addView = async (postId) => {
-  try {
+export const addView=async(postId)=>{
+  try{
+    const redisClient=await connectRedis();
+    const key=`view:${postId}`
     const session = await auth();
     if (!session || !session.user?.id) {
       return false;
     }
-
-    const redisClient = await connectRedis();
-    const viewKey = `view:${postId}`;
-    const userId = session.user.id;
-    
-    // Use transaction for atomic operations
-    const multi = redisClient.multi();
-    
-    // Add to tracking set for sync process
-    multi.sAdd("view-keys", viewKey);
-    
-    // Add user to post's view set (automatically handles uniqueness)
-    multi.sAdd(viewKey, userId);
-    
-    // Optional: Set TTL on view key to auto-cleanup old data
-    multi.expire(viewKey, 604800); // 7 days
-    
-    const results = await multi.exec();
-    
-    // Check if this was a new view (sAdd returns 1 if new, 0 if existed)
-    const isNewView = results[1] === 1;
-    
-    return { success: true, isNewView };
-    
-  } catch (err) {
-    console.error("Error in addView:", err);
-    return { success: false };
+    await redisClient.sAdd("view-keys",key)
+    const userId=session.user.id;
+    await redisClient.sAdd(key,userId)
+    return true;
+  }catch(err){
+    console.log(err)
+    return false
   }
-};
-
-/**
- * Get total unique view count for a post
- */
-export const getViewCount = async (postId) => {
-  try {
-    const redisClient = await connectRedis();
-    const viewKey = `view:${postId}`;
-    
-    const views = await redisClient.sCard(viewKey);
-    return views || 0;
-    
-  } catch (err) {
-    console.error("Error in getViewCount:", err);
+}
+export const getViewCount=async(postId)=>{
+  try{
+    const redisClient=await connectRedis();
+    const key=`view:${postId}`
+    const views=await redisClient.sCard(key)
+    console.log()
+    return views;
+  }catch(err){
+    console.log(err)
     return 0;
   }
-};
-
-/**
- * Batch get likes for multiple posts (performance optimization)
- */
-export const getBatchLikes = async (postIds) => {
-  try {
-    if (!postIds || postIds.length === 0) {
-      return {};
-    }
-
-    const redisClient = await connectRedis();
-    const multi = redisClient.multi();
-    
-    // Queue all get operations
-    postIds.forEach(postId => {
-      multi.get(`post:${postId}:likes`);
-    });
-    
-    const results = await multi.exec();
-    
-    // Map results to post IDs
-    const likesMap = {};
-    postIds.forEach((postId, index) => {
-      likesMap[postId] = parseInt(results[index] || "0");
-    });
-    
-    return likesMap;
-    
-  } catch (err) {
-    console.error("Error in getBatchLikes:", err);
-    return {};
-  }
-};
-
-/**
- * Batch check if current user has liked multiple posts
- */
-export const getBatchUserLikes = async (postIds) => {
-  try {
-    const session = await auth();
-    if (!session || !session.user?.id || !postIds || postIds.length === 0) {
-      return {};
-    }
-
-    const redisClient = await connectRedis();
-    const multi = redisClient.multi();
-    const userId = session.user.id;
-    
-    // Queue all get operations
-    postIds.forEach(postId => {
-      multi.get(`user:${userId}:liked:${postId}`);
-    });
-    
-    const results = await multi.exec();
-    
-    // Map results to post IDs
-    const likesMap = {};
-    postIds.forEach((postId, index) => {
-      likesMap[postId] = results[index] === "1";
-    });
-    
-    return likesMap;
-    
-  } catch (err) {
-    console.error("Error in getBatchUserLikes:", err);
-    return {};
-  }
-};
-
-/**
- * Get statistics for a post (likes and views combined)
- */
-export const getPostStats = async (postId) => {
-  try {
-    const redisClient = await connectRedis();
-    const multi = redisClient.multi();
-    
-    // Get both likes and views in one go
-    multi.get(`post:${postId}:likes`);
-    multi.sCard(`view:${postId}`);
-    
-    const [likes, views] = await multi.exec();
-    
-    return {
-      likes: parseInt(likes || "0"),
-      views: views || 0
-    };
-    
-  } catch (err) {
-    console.error("Error in getPostStats:", err);
-    return { likes: 0, views: 0 };
-  }
-};
-
+}
 /**
  * Initialize likes for a new post (optional)
  */
