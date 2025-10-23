@@ -1,6 +1,7 @@
 import React from 'react';
 import { githubLogIn, googleLogIn} from '../lib/actions/auth';
 import Image from 'next/image';
+
 const SignInButton=({title})=>{
   const isGoogle=title.toLowerCase()==="google"
   return (isGoogle)?(

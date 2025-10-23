@@ -160,4 +160,3 @@ export const getUserDetails=async(userId)=>{
     return {success:false,error:err.message}
   }
 }
-

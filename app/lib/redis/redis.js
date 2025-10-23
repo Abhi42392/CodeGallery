@@ -1,10 +1,7 @@
 import connectRedis from "@/app/config/redis";
 import { auth } from "../../auth";
 
-/**
- * Handle like/unlike operations with atomic Redis operations
- * Uses separate key for like counts to match sync mechanism
- */
+
 export const handleLike = async (postId) => {
   try {
     const session = await auth();
